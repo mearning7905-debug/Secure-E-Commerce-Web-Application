@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ElectroShop | Explore Products</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            /* dark base */
+            background-color: #05070a;
+
+            /* blue glow layers */
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(0, 210, 255, 0.25), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 140, 255, 0.20), transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(0, 120, 255, 0.15), transparent 40%);
+
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: #0b1218;
+            border-bottom: 1px solid #1c2633;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #16c0dd;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .nav-btn {
+            background: #1c2633;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .nav-btn.active {
+            background: #2563eb;
+        }
+
+        .cart-icon {
+            position: relative;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        #cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -10px;
+            background: #ff4757;
+            color: white;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+
+            background: #0f172a;
+            color: white;
+
+            padding: 14px 24px;
+            border-radius: 10px;
+
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+
+            opacity: 0;
+            transition: 0.4s;
+
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .profile-menu {
+            position: relative;
+        }
+
+        .profile-menu button {
+            background: none;
+            border: none;
+            color: #c9d1d9;
+            font-size: 22px;
+            cursor: pointer;
+        }
+
+        .dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 35px;
+            background: #161b22;
+            border: 1px solid #30363d;
+            min-width: 180px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 12px 15px;
+            color: #c9d1d9;
+            text-decoration: none;
+            font-size: 14px;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .dropdown a:hover {
+            background: #30363d;
+        }
+
+        .admin-title {
+            padding: 10px;
+            font-size: 11px;
+            color: #8b949e;
+            border-bottom: 1px solid #30363d;
+        }
+
+        /* PAGE CONTAINER */
+
+        .container {
+            max-width: 1300px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        /* PRODUCTS TITLE */
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        /* TOP SEARCH AREA */
+
+        /* SEARCH FILTER BAR */
+
+        .search-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        /* SEARCH INPUT */
+
+        .search-input {
+            flex: 1;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid #1c2633;
+            background: #0d1320;
+            color: white;
+            font-size: 14px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #00d2ff;
+        }
+
+        /* DROPDOWNS */
+
+        .product-select,
+        .sort-select {
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid #1c2633;
+            background: #0d1320;
+            color: white;
+            min-width: 180px;
+            cursor: pointer;
+        }
+
+        .search-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        /* SEARCH BOX */
+        /* .search-box {
+            display: flex;
+            flex: 1;
+            gap: 10px;
+        }
+        .search-box input {
+            flex: 1;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid #1c2633;
+            background: #0d1320;
+            color: white;
+            font-size: 14px;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: #00d2ff;
+        } */
+        /* SEARCH BUTTON */
+        /*         .search-btn {
+            padding: 12px 22px;
+            border: none;
+            border-radius: 10px;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+        } */
+        /* FILTER DROPDOWNS */
+        /* .filter-section {
+            display: flex;
+            gap: 12px;
+        }
+        .product-select,
+        .sort-select {
+            background: #0d1320;
+            border: 1px solid #1c2633;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            min-width: 170px;
+        } */
+        /* CATEGORY + SORT DROPDOWN */
+        /* .filter-section {
+            display: flex;
+            gap: 15px;
+        }
+        .category-chip {
+            display: none;
+        } */
+        /* DROPDOWN STYLE */
+        /* .product-select {
+            background: #0d1320;
+            border: 1px solid #1c2633;
+            color: white;
+            padding: 13px 16px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            width: 190px;
+        }
+        .sort-select {
+            background: #0d1320;
+            border: 1px solid #1c2633;
+            color: white;
+            padding: 13px 16px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            width: 190px;
+        } */
+
+
+        /* MAIN PRODUCT AREA */
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* PRICE RANGE CARD */
+        .price-filter {
+            background: #0d1320;
+            border: 1px solid #1c2633;
+            border-radius: 16px;
+            padding: 20px;
+            height: 110px;
+        }
+
+        .price-filter h4 {
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        /* RANGE SLIDER */
+
+        .price-filter input[type=range] {
+            width: 100%;
+        }
+
+        /* PRODUCT CARD */
+
+        .card {
+            background: linear-gradient(145deg, #0f172a, #020617);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            transition: .35s;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: #00d2ff;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .card img {
+            width: 100%;
+            height: 170px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        /* NAME */
+
+        .card h3 {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+
+        /* PRICE */
+
+        .price {
+            color: #22c3dd;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        /* BUTTON GROUP */
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .pay-btn {
+            flex: 1.4;
+            background: #1e293b;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .pay-btn:hover {
+            background: #334155;
+            transform: translateY(-2px);
+        }
+
+        .detail-btn {
+            flex: 1.4;
+            background: #2563eb;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: .3s;
+        }
+
+        .detail-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        /* CART SLIDER */
+
+        .cart-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100%;
+            background: #0d1320;
+            border-left: 1px solid #1c2633;
+            padding: 20px;
+            transition: 0.4s;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .cart-panel.active {
+            right: 0;
+        }
+
+        /* CART SUMMSRY */
+        .cart-summary {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .cart-summary .row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #cbd5f1;
+        }
+
+        .cart-summary .total {
+            font-size: 16px;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* CART HEADER */
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .close-cart {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        /* CART ITEM */
+        .cart-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            background: linear-gradient(145deg, #0f172a, #020617);
+
+            padding: 14px;
+            border-radius: 14px;
+
+            margin-bottom: 15px;
+        }
+
+        .cart-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .cart-details {
+            flex: 1;
+        }
+
+        .cart-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .cart-price {
+            color: #22c3dd;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .cart-qty {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            background: #111827;
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .qty-num {
+            font-size: 14px;
+        }
+
+        .delete-btn {
+            background: none;
+            border: none;
+            color: red;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* FOOTER */
+
+        .cart-footer {
+            position: absolute;
+            bottom: 20px;
+            width: 90%;
+        }
+
+        .btn-cart {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 70px;
+        }
+
+        .clear-btn {
+            background: #ef4444;
+            border: none;
+            padding: 10px;
+            width: 50%;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .pay-now {
+            background: #2563eb;
+            border: none;
+            padding: 10px;
+            width: 50%;
+            border-radius: 8px;
+            color: white;
+        }
+
+        /* Admin Login Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #0d1117;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #00d2ff;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #161b22;
+            border: 1px solid #30363d;
+            color: white;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        #admin-error {
+            color: #ff4d4d;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+    </style>
+
+    <!-- Rezorpay -->
+    <!-- <script>
+        async function payNow(amount) {
+            let response = await fetch("/create-order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    amount: amount
+                })
+            })
+
+            let order = await response.json()
+
+            var options = {
+                key: "rzp_test_SPoIpuOUhqlt8e",
+                amount: order.amount,
+                currency: "INR",
+                name: "SmartPay Store",
+                description: "Product Purchase",
+                order_id: order.id,
+                handler: async function (response) {
+                    await fetch("/verify-payment", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(response)
+                    })
+
+                    alert("✅ Payment Successful")
+                    window.location.href = "/history"
+                }
+            }
+            var rzp = new Razorpay(options)
+            rzp.open()
+        }
+
+    </script> -->
+
+    <script>
+        /* CATEGORY FILTER */
+
+        function filterCategory(category) {
+            const cards = document.querySelectorAll(".card");
+
+            cards.forEach(card => {
+
+                const productCategory = card.dataset.category ? card.dataset.category.toLowerCase().trim() : "";
+                const selectedCategory = category.toLowerCase().trim();
+
+                if (selectedCategory === "all") {
+                    card.style.display = "block";
+                }
+                else if (productCategory.includes(selectedCategory)) {
+                    card.style.display = "block";
+                }
+                else {
+                    card.style.display = "none";
+                }
+            });
+        }
+        /* SORT PRODUCTS */
+        function sortProducts(type) {
+
+            const grid = document.getElementById("imageGrid");
+            const cards = Array.from(grid.querySelectorAll(".card"));
+
+            cards.sort((a, b) => {
+
+                let priceA = parseInt(a.dataset.price);
+                let priceB = parseInt(b.dataset.price);
+
+                let nameA = a.dataset.name.toLowerCase();
+                let nameB = b.dataset.name.toLowerCase();
+
+                if (type === "low") return priceA - priceB;
+
+                if (type === "high") return priceB - priceA;
+
+                if (type === "az") return nameA.localeCompare(nameB);
+
+                if (type === "za") return nameB.localeCompare(nameA);
+
+                return 0;
+
+            });
+
+            grid.innerHTML = "";
+            cards.forEach(card => grid.appendChild(card));
+
+        }
+
+        // Toast
+        function showToast(message) {
+
+            const toast = document.getElementById("toast");
+
+            toast.innerText = "🛒 " + message;
+
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2500);
+
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="logo" onclick="location.href='/'" style="cursor:pointer;">ElectroShop</div>
+
+        <div class="nav-menu">
+            <button class="nav-btn" onclick="location.href='/'">Home</button>
+            <button class="nav-btn active" onclick="location.href='/shop'">Products</button>
+
+            <!-- CART -->
+            <div class="cart-icon" onclick="openCart()">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-badge">
+                    {{ session['cart']|length if session.get('cart') is iterable else 0 }}
+                </span>
+            </div>
+
+            <!-- Login/Signup Buttons -->
+            {% if session.get('user_email') %}
+                <a href="/dashboard" style="background: #1e293b; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500;">
+                    <i class="fa-solid fa-user"></i> Dashboard
+                </a>
+                <a href="/logout" style="background: #ef4444; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500;">Logout</a>
+            {% else %}
+                <a href="/login" style="background: transparent; border: 1px solid #00d2ff; color: #00d2ff; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500;">Login</a>
+                <a href="/signup" style="background: #00d2ff; color: black; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600;">Sign Up</a>
+            {% endif %}
+
+            <!-- ADMIN PROFILE -->
+            <div class="profile-menu">
+                <button onclick="toggleAdminMenu(event)" id="adminBtn">
+                    <i class="fa-solid fa-shield-halved" style="color: #00d2ff;"></i>
+                </button>
+
+                <div id="adminDropdown" class="dropdown">
+                    <div class="admin-title">ADMIN ACCESS</div>
+                    <a href="#" onclick="toggleAdminMenu(event)">
+                        <i class="fa fa-lock"></i> Admin Login
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="cartPanel" class="cart-panel">
+
+        <div class="cart-header">
+            <h3>🛒 Cart (<span id="cart-count">0</span>)</h3>
+            <span onclick="closeCart()" class="close-cart">✕</span>
+        </div>
+
+        <div id="cartItems" style="margin-bottom: 150px;">
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-summary">
+
+                <div class="row">
+                    <span>Subtotal</span>
+                    <span id="subtotal">₹0</span>
+                </div>
+
+                <div class="row">
+                    <span>Tax (18%)</span>
+                    <span id="tax">₹0</span>
+                </div>
+
+                <div class="row">
+                    <span>Delivery</span>
+                    <span>Free</span>
+                </div>
+
+                <hr>
+
+                <div class="row total">
+                    <span>Total</span>
+                    <span id="total">₹0</span>
+                </div>
+
+            </div>
+            <div class="btn-cart">
+                <button onclick="clearCart()" class="clear-btn">Clear Cart</button>
+                <!-- <button onclick="location.href='/login'" class="pay-now">Pay Now</button> -->
+                <button onclick="location.href='/pay/1'" class="pay-now">Pay Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="search-filter-bar">
+            <input id="searchInput" class="search-input" type="text" placeholder="🔍 Search products ..."
+                oninput="searchProduct()">
+
+
+
+            <select class="product-select" onchange="filterCategory(this.value)">
+                <option value="all">All Categories</option>
+                <option value="phone">Smartphones</option>
+                <option value="laptop">Laptops</option>
+                <option value="tv">TV</option>
+                <option value="ac">AC</option>
+                <option value="fridge">Fridges</option>
+            </select>
+
+            <select class="sort-select" onchange="sortProducts(this.value)">
+                <option value="default">Default</option>
+                <option value="low">Price : Low → High</option>
+                <option value="high">Price : High → Low</option>
+                <option value="az">Name : A → Z</option>
+                <option value="za">Name : Z → A</option>
+            </select>
+
+        </div>
+        <div class="grid" id="imageGrid">
+            {% for p in products %}
+
+            <div class="card" data-price="{{ p.price }}" data-name="{{ p.name }}" data-category="{{ p.category }}">
+
+                <img src="/static/{{ p.image }}">
+
+                <h3>{{ p.name }}</h3>
+
+                <div class="price">₹{{ p.price }}</div>
+
+                <div class="btn-group">
+                    <button class="pay-btn" onclick="addToCart('{{ p.id }}')">Add to Cart 🛒</button>
+                    <button class="detail-btn" onclick="location.href='/product/{{ p.id }}'">View Details</button>
+                </div>
+
+            </div>
+
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <script>
+
+
+        function openCart() {
+            document.getElementById("cartPanel").classList.add("active");
+            loadCart();
+        }
+
+        function closeCart() {
+            document.getElementById("cartPanel").classList.remove("active");
+        }
+
+        async function loadCart() {
+
+            let res = await fetch("/cart_data");
+            let data = await res.json();
+
+            document.getElementById("cart-count").innerText = data.items.length;
+
+            document.getElementById("subtotal").innerText = "₹" + data.subtotal;
+            document.getElementById("tax").innerText = "₹" + data.tax;
+            document.getElementById("total").innerText = "₹" + data.total;
+
+            let container = document.getElementById("cartItems");
+
+            container.innerHTML = "";
+
+            if (data.items.length === 0) {
+
+                container.innerHTML = `<p>Your cart is empty</p>`;
+                return;
+
+            }
+
+            data.items.forEach(item => {
+
+                container.innerHTML += `
+
+<div class="cart-card">
+
+<img class="cart-img" src="/static/${item.image}">
+
+<div class="cart-details">
+
+<div class="cart-title">${item.name}</div>
+
+<div class="cart-price">₹${item.price}</div>
+
+<div class="cart-qty">
+
+<button class="qty-btn" onclick="updateQty('${item.id}','minus')">-</button>
+
+<span class="qty-num">${item.qty}</span>
+
+<button class="qty-btn" onclick="updateQty('${item.id}','plus')">+</button>
+
+</div>
+
+</div>
+
+<button class="delete-btn" onclick="removeItem('${item.id}')">
+<i class="fa fa-trash"></i>
+</button>
+
+</div>
+
+`;
+
+            });
+
+        }
+
+        async function updateQty(productId, action) {
+
+            await fetch(`/update_cart/${productId}/${action}`);
+
+            loadCart();
+
+        }
+        async function removeItem(productId) {
+
+            await fetch(`/remove_from_cart/${productId}`);
+
+            loadCart();
+
+        }
+    </script>
+
+    <script>
+        function toggleAdminMenu(event) {
+            event.stopPropagation();
+            let dropdown = document.getElementById("adminDropdown");
+            dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+        }
+
+        window.onclick = function (event) {
+            let dropdown = document.getElementById("adminDropdown");
+            let adminBtn = document.getElementById("adminBtn");
+
+            if (dropdown && !adminBtn.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = "none";
+            }
+        }
+
+        async function addToCart(productId) {
+            try {
+
+                const response = await fetch(`/add_to_cart/${productId}`);
+                const data = await response.json();
+
+                if (data.status === "success") {
+
+                    const badge = document.getElementById("cart-badge");
+                    if (badge) {
+                        badge.innerText = data.total_items;
+                    }
+
+                    showToast("Item added to cart");
+
+                    if (document.getElementById("cartPanel").classList.contains("active")) {
+                        loadCart();
+                    }
+
+                } else {
+                    alert("Error: " + data.message);
+                }
+
+            } catch (error) {
+                console.error("Fetch error:", error);
+            }
+        }
+        async function clearCart() {
+            await fetch("/clear_cart");
+            const badge = document.getElementById("cart-badge");
+            if (badge) badge.innerText = "0";
+            loadCart();
+        }
+
+
+        function searchProduct() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                let name = card.dataset.name.toLowerCase();
+                if (name.includes(input)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        // 1. Show the Pop-up
+        function toggleAdminMenu(event) {
+            event.preventDefault();
+            document.getElementById("adminModal").style.display = "flex";
+        }
+
+        // 2. Close the Pop-up
+        function closeAdminModal() {
+            document.getElementById("adminModal").style.display = "none";
+        }
+
+        // 3. Check Admin Data via Flask
+        async function submitAdminLogin() {
+            const user = document.getElementById("adminUser").value;
+            const pass = document.getElementById("adminPass").value;
+
+            const response = await fetch('/verify_admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, password: pass })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                window.location.href = "/admin"; // Redirect to dashboard
+            } else {
+                document.getElementById("errorMsg").innerText = "❌ invalid data";
+            }
+        }
+    </script>
+
+    <div id="toast" class="toast-notification"></div>
+
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #00d2ff;">Admin Authentication</h3>
+            <input type="text" id="adminUser" placeholder="Admin Name">
+            <input type="password" id="adminPass" placeholder="Password">
+            <button onclick="submitAdminLogin()">Access Dashboard</button>
+            <button onclick="closeAdminModal()" style="background: #30363d; margin-top: 5px;">Cancel</button>
+            <p id="admin-error"></p>
+        </div>
+    </div>
+
+</body>
+
+</html>

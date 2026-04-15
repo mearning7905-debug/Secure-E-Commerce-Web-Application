@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectroHub | Premium Electronics Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00d2ff;
+            --bg-dark: #05070a;
+            --card-bg: #0f172a;
+            --text-gray: #94a3b8;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Smooth Page Load Animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 8%;
+            background: radial-gradient(circle at 20% 50%, #0d1a29 0%, #05070a 100%);
+            position: relative;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 1300px;
+            z-index: 2;
+        }
+
+        .hero-content {
+            flex: 1;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .hero-content h1 {
+            font-size: clamp(40px, 6vw, 70px);
+            line-height: 1.1;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .hero-content span {
+            color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-content p {
+            color: var(--text-gray);
+            font-size: 18px;
+            margin-bottom: 35px;
+            max-width: 500px;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        /* Shop Now Button linked to homepage.html */
+        .btn-primary {
+            background: var(--primary);
+            color: black;
+            padding: 16px 40px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.02);
+            background: white;
+            box-shadow: 0 20px 40px rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-secondary {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            padding: 16px 40px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+
+        .hero-image {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .hero-image img {
+            width: 100%;
+            max-width: 480px;
+            border-radius: 24px;
+            filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.5));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        /* --- Product Section --- */
+        .products-section {
+            padding: 100px 8%;
+            text-align: center;
+        }
+
+        .section-title {
+            font-size: 40px;
+            margin-bottom: 60px;
+            font-weight: 800;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 24px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 210, 255, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .product-card:hover::before {
+            opacity: 1;
+        }
+
+        .product-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 25px 50px rgba(0, 210, 255, 0.15);
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: #ff4757;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            z-index: 1;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .category {
+            color: var(--primary);
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .product-name {
+            font-size: 20px;
+            margin: 12px 0;
+            font-weight: 700;
+        }
+
+        .rating {
+            color: #f1c40f;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .old-price {
+            font-size: 16px;
+            color: var(--text-gray);
+            text-decoration: line-through;
+            font-weight: 400;
+        }
+
+        .card-btns {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .add-btn {
+            flex: 1;
+            background: #1e293b;
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .buy-btn {
+            flex: 1.5;
+            background: var(--primary);
+            color: black;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .add-btn:hover {
+            background: #334155;
+        }
+
+        .buy-btn:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+
+        /* --- Footer Section --- */
+        footer {
+            background: #030508;
+            padding: 100px 8% 50px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .footer-container {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr 1fr 1fr;
+            gap: 60px;
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .footer-logo h2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+            font-weight: 800;
+        }
+
+        .footer-logo span {
+            background: var(--primary);
+            color: black;
+            padding: 6px 12px;
+            border-radius: 10px;
+        }
+
+        .footer-logo p {
+            color: var(--text-gray);
+            line-height: 1.8;
+            max-width: 320px;
+        }
+
+        .footer-col h4 {
+            margin-bottom: 30px;
+            font-size: 18px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 18px;
+        }
+
+        .footer-col ul li a {
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: 0.3s;
+            font-size: 15px;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--primary);
+            padding-left: 8px;
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 80px;
+            color: #475569;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 40px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 100px;
+            }
+
+            .hero-image {
+                justify-content: center;
+                margin-top: 50px;
+            }
+
+            .hero-content p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .btn-group {
+                justify-content: center;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Top Navigation Bar -->
+    <nav style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; justify-content: space-between; align-items: center; padding: 15px 5%; background: rgba(11, 18, 24, 0.95); border-bottom: 1px solid #1c2633; backdrop-filter: blur(10px);">
+        <div style="font-size: 22px; font-weight: 700; color: #00d2ff; cursor: pointer;" onclick="location.href='/'">ElectroHub</div>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <a href="/shop" style="color: #94a3b8; text-decoration: none; font-weight: 500; transition: 0.3s;">Shop</a>
+            <a href="/login" style="background: transparent; border: 1px solid #00d2ff; color: #00d2ff; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; transition: 0.3s;">Login</a>
+            <a href="/signup" style="background: #00d2ff; color: black; padding: 10px 24px; border-radius: 8px; text-decoration: none; font-weight: 700; transition: 0.3s;">Sign Up</a>
+        </div>
+    </nav>
+
+    <section class="hero" style="padding-top: 80px;">
+        <div class="container">
+            <div class="hero-content">
+                <div
+                    style="background:rgba(0,210,255,0.1); border:1px solid var(--primary); padding:8px 20px; border-radius:30px; display:inline-block; color:var(--primary); font-size:12px; font-weight:800; margin-bottom:25px; letter-spacing: 1px;">
+                    ✨ NEW ARRIVALS 2026</div>
+                <h1>Experience the <br> <span>Future of Tech</span></h1>
+                <p>Discover premium electronic devices from world-leading brands. Cutting-edge technology meets
+                    exceptional design.</p>
+                <div class="btn-group">
+                    <a href="/shop" class="btn-primary">Shop Now ➔</a>
+                    <a href="#shop" class="btn-secondary">View Collection</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://images.unsplash.com/photo-1695048133142-1a20484d2569?q=80&w=1200" alt="iPhone 15 Pro">
+            </div>
+        </div>
+    </section>
+
+    <section class="products-section" id="shop">
+        <h2 class="section-title">Featured Products</h2>
+        <div class="product-grid">
+            <div class="product-card">
+                <div class="discount-badge">-18%</div>
+                <img src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?q=80&w=600" alt="Samsung Watch"
+                    class="product-img">
+                <p class="category">Smartwatches</p>
+                <h3 class="product-name">Samsung Galaxy Watch 6</h3>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <span>(1,123)</span>
+                </div>
+                <div class="price">₹26,999 <span class="old-price">₹32,999</span></div>
+                <div class="card-btns">
+                    <button class="add-btn"><i class="fas fa-shopping-cart"></i> Add</button>
+
+                    <button class="buy-btn" onclick="payNow(26999)">
+                        <i class="fas fa-bolt"></i> Buy Now
+                    </button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=600" alt="Headphones"
+                    class="product-img">
+                <p class="category">Headphones</p>
+                <h3 class="product-name">Sony WH-1000XM5</h3>
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>(856)</span>
+                </div>
+                <div class="price">₹29,990</div>
+                <div class="card-btns">
+                    <button class="add-btn"><i class="fas fa-shopping-cart"></i> Add</button>
+                    <button class="buy-btn" onclick="location.href='products.html'"><i class="fas fa-bolt"></i> Buy
+                        Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <h2><span>E</span> ElectroHub</h2>
+                <p>Premium electronics store with the latest gadgets and accessories. Every transaction is screened and
+                    secured.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="/shop">TV</a></li>
+                    <li><a href="/shop">AC</a></li>
+                    <li><a href="/shop">Phones</a></li>
+                    <li><a href="/shop">Fridges</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Shipping</a></li>
+                    <li><a href="#">Returns</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+        <p class="copyright">© 2026 ElectroHub. All rights reserved.</p>
+    </footer>
+
+</body>
+
+</html>

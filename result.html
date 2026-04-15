@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Transaction Result</title>
+    <style>
+        body {
+            margin: 0;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #05070a;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(0, 210, 255, 0.25), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 140, 255, 0.20), transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(0, 120, 255, 0.15), transparent 40%);
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: #0b1218;
+            border-bottom: 1px solid #1c2633;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #16c0dd;
+        }
+
+        .nav-btn {
+            background: #1c2633;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .result-container {
+            background: #161b22 !important;
+            width: 420px;
+            margin: 100px auto;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeUp 0.6s ease;
+        }
+
+        .circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .success-bg {
+            background: #10b981;
+            color: white;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .danger-bg {
+            background: #ef4444;
+            color: white;
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .status-text {
+            font-size: 28px;
+            color: #38bdf8;
+            margin-bottom: 10px;
+        }
+
+        .order-id {
+            color: #94a3b8;
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .details-section {
+            text-align: left;
+            margin: 20px 0;
+        }
+
+        .details-section p {
+            display: flex;
+            justify-content: space-between;
+            margin: 12px 0;
+            font-size: 16px;
+            color: #cbd5e1;
+        }
+
+        .details-section span {
+            color: #64748b;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-invoice {
+            background: #38bdf8;
+            color: #0f172a;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-continue {
+            background: rgba(255, 255, 255, 0.05);
+            color: #94a3b8;
+            border: 1px solid #334155;
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="logo" onclick="location.href='/'" style="cursor:pointer;">🛡️ SecurePay</div>
+        <div class="nav-menu">
+            <button class="nav-btn" onclick="location.href='/'">Home</button>
+            <button class="nav-btn" onclick="location.href='/shop'">Products</button>
+        </div>
+    </div>
+
+    <div class="result-container">
+        <div class="status-icon">
+            {% if session.get('result') and "Successful" in session.get('result') %}
+            <div class="circle success-bg">✓</div>
+            {% else %}
+            <div class="circle danger-bg">✗</div>
+            {% endif %}
+        </div>
+
+        <h2 class="status-text">
+            {% if session.get('result') and "Successful" in session.get('result') %}
+            ✔ Transaction Successful
+            {% else %}
+            Transaction Failed
+            {% endif %}
+        </h2>
+        <p class="order-id">Transaction ID: <b>{{ session.get('txn_id', 'N/A') }}</b></p>
+
+        <hr style="border: 0; border-top: 1px solid #334155; margin: 20px 0;">
+
+        <div class="details-section">
+            <p><span>Card:</span> **** {{ session.get('card_number', '0000')[-4:] }}</p>
+            <p><span>Bank:</span> {{ session.get('bank_name', 'N/A') }}</p>
+            <p><span>Amount:</span> ₹{{ session.get('amount', 0) }}</p>
+            <p><span>Time:</span> {{ session.get('tx_time', 'N/A') }}</p>
+        </div>
+
+        {% if session.get('fraud_reasons') %}
+        <div
+            style="background: rgba(239, 68, 68, 0.1); padding: 15px; border-radius: 12px; margin-top: 15px; border-left: 4px solid #ef4444; text-align: left;">
+            <h4 style="color: #ef4444; margin: 0 0 10px 0;">Fraud Analysis:</h4>
+            <ul style="color: #fca5a5; margin: 0; padding-left: 20px; font-size: 14px;">
+                {% for reason in session.get('fraud_reasons') %}
+                <li>{{ reason }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <div class="action-buttons">
+            {% if session.get('result') and "Successful" in session.get('result') %}
+            <button class="btn-invoice" onclick="location.href='/view-invoice'">📄 View Invoice</button>
+            {% endif %}
+
+            <button class="btn-continue" onclick="location.href='/shop'">Continue Shopping</button>
+        </div>
+    </div>
+
+</body>
+
+</html>

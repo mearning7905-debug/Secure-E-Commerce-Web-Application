@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name }} | ElectroShop</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- Product Detail Page Specific --- */
+        .pd-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 5%;
+            padding-top: 100px;
+        }
+
+        /* Back link */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-gray);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 30px;
+            transition: color 0.2s ease;
+        }
+        .back-link:hover { color: var(--primary); }
+
+        /* Main layout */
+        .pd-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        /* Image side */
+        .pd-image-box {
+            background: #111827;
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 450px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .pd-image-box img {
+            max-width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .pd-image-box:hover img {
+            transform: scale(1.03);
+        }
+
+        /* Details side */
+        .pd-details {}
+
+        .pd-badge {
+            display: inline-block;
+            background: rgba(63, 185, 80, 0.15);
+            color: var(--success);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .pd-name {
+            font-size: 32px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .pd-model {
+            color: var(--text-gray);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        /* Rating */
+        .pd-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+        .pd-rating .stars { color: #f1c40f; font-size: 16px; }
+        .pd-rating .count { color: var(--text-gray); font-size: 13px; }
+
+        /* Specs */
+        .pd-specs {
+            margin-bottom: 30px;
+        }
+
+        .pd-specs-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-gray);
+            margin-bottom: 16px;
+        }
+
+        .pd-spec-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            font-size: 14px;
+        }
+
+        .pd-spec-label {
+            width: 140px;
+            font-weight: 700;
+            color: var(--text-gray);
+            flex-shrink: 0;
+        }
+
+        .pd-spec-value {
+            color: var(--text-main);
+        }
+
+        /* Price */
+        .pd-price-box {
+            margin: 30px 0;
+        }
+
+        .pd-price {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .pd-tax {
+            color: var(--text-gray);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        /* Trust badges */
+        .pd-trust {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .pd-trust-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 12px;
+            text-align: center;
+            flex: 1;
+            color: var(--text-gray);
+        }
+
+        .pd-trust-item i {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 6px;
+            color: var(--primary);
+        }
+
+        /* Action buttons */
+        .pd-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .pd-btn-cart {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: background 0.2s ease, border-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pd-btn-cart:hover {
+            background: rgba(255,255,255,0.06);
+            border-color: var(--primary);
+        }
+
+        .pd-btn-buy {
+            flex: 1.5;
+            background: var(--primary);
+            border: none;
+            color: black;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            font-family: var(--font-body);
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        .pd-btn-buy:hover {
+            background: #00b4db;
+            transform: translateY(-2px);
+        }
+
+        .pd-btn-wishlist {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background: transparent;
+            color: var(--text-gray);
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease, border-color 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .pd-btn-wishlist:hover {
+            color: #f85149;
+            border-color: #f85149;
+        }
+
+        /* Reviews section */
+        .pd-reviews {
+            max-width: 1200px;
+            margin: 60px auto 0;
+            padding: 0 5% 60px;
+        }
+
+        .pd-reviews h2 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 24px;
+        }
+
+        .review-form {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 30px;
+        }
+
+        .review-form select {
+            background: #111827;
+            color: white;
+            border: 1px solid var(--border-color);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            margin-bottom: 12px;
+        }
+
+        .review-form textarea {
+            width: 100%;
+            height: 100px;
+            background: #111827;
+            color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px;
+            resize: none;
+            font-size: 14px;
+            font-family: var(--font-body);
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+        }
+
+        .review-form textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .review-form button {
+            background: var(--primary);
+            color: black;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-family: var(--font-body);
+            margin-top: 12px;
+            transition: background 0.2s ease;
+        }
+
+        .review-form button:hover { background: #00b4db; }
+
+        .review-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .review-card .review-stars { color: #f1c40f; font-size: 14px; margin-bottom: 8px; }
+        .review-card .review-text { color: var(--text-gray); line-height: 1.6; font-size: 14px; }
+        .review-card .review-date { color: #475569; font-size: 12px; margin-top: 8px; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pd-grid { grid-template-columns: 1fr; gap: 30px; }
+            .pd-image-box { position: static; min-height: 300px; padding: 30px; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo" onclick="location.href='/'" style="cursor:pointer;">ElectroShop</div>
+        <div class="nav-menu">
+            <button class="nav-btn" onclick="location.href='/'">Home</button>
+            <button class="nav-btn" onclick="location.href='/shop'">Products</button>
+
+            {% if session.get('user_email') %}
+                <a href="/dashboard" class="nav-btn" style="text-decoration:none;">
+                    <i class="fa-solid fa-user"></i> Dashboard
+                </a>
+                <a href="/logout" style="background: var(--danger); color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500;">Logout</a>
+            {% else %}
+                <a href="/login" style="border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500;">Login</a>
+                <a href="/signup" style="background: var(--primary); color: black; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 700;">Sign Up</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Product Detail -->
+    <div class="pd-wrapper">
+        <a href="/shop" class="back-link"><i class="fa-solid fa-arrow-left"></i> Back to Products</a>
+
+        <div class="pd-grid">
+            <!-- Image -->
+            <div class="pd-image-box">
+                <img src="/static/{{ product.image }}" alt="{{ product.name }}">
+            </div>
+
+            <!-- Details -->
+            <div class="pd-details">
+                <span class="pd-badge">✔ In Stock</span>
+                <h1 class="pd-name">{{ product.name }}</h1>
+                <p class="pd-model">Model: 2026 Edition</p>
+
+                <div class="pd-rating">
+                    <span class="stars">★★★★☆</span>
+                    <span class="count">({{ reviews|length }} reviews)</span>
+                </div>
+
+                <div class="pd-specs">
+                    <p class="pd-specs-title">Specifications</p>
+                    <div class="pd-spec-row">
+                        <span class="pd-spec-label">Category</span>
+                        <span class="pd-spec-value">Electronics</span>
+                    </div>
+                    <div class="pd-spec-row">
+                        <span class="pd-spec-label">Brand</span>
+                        <span class="pd-spec-value">ElectroShop Original</span>
+                    </div>
+                    <div class="pd-spec-row">
+                        <span class="pd-spec-label">Model</span>
+                        <span class="pd-spec-value">2026 Edition</span>
+                    </div>
+                    <div class="pd-spec-row">
+                        <span class="pd-spec-label">Availability</span>
+                        <span class="pd-spec-value">Ready to Ship</span>
+                    </div>
+                </div>
+
+                <div class="pd-price-box">
+                    <div class="pd-price">₹{{ product.price }}</div>
+                    <div class="pd-tax">Inclusive of all taxes</div>
+                </div>
+
+                <div class="pd-trust">
+                    <div class="pd-trust-item">
+                        <i class="fa-solid fa-truck-fast"></i>
+                        Free Delivery
+                    </div>
+                    <div class="pd-trust-item">
+                        <i class="fa-solid fa-rotate-left"></i>
+                        7 Day Return
+                    </div>
+                    <div class="pd-trust-item">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        1 Year Warranty
+                    </div>
+                </div>
+
+                <div class="pd-actions">
+                    <button class="pd-btn-cart" onclick="addToCartDetail('{{ product.id }}')">
+                        <i class="fa-solid fa-cart-shopping"></i> Add to Cart
+                    </button>
+                    <button class="pd-btn-buy" onclick="location.href='/pay/{{ product.id }}'">
+                        Buy Now
+                    </button>
+                    <button class="pd-btn-wishlist"><i class="fa-regular fa-heart"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews -->
+    <div class="pd-reviews">
+        <h2>Customer Reviews</h2>
+
+        <div class="review-form">
+            <h4 style="margin-bottom: 12px;">Write a Review</h4>
+            <form method="post" action="/add_review/{{ product.id }}">
+                <select name="rating">
+                    <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                    <option value="4">⭐⭐⭐⭐ Good</option>
+                    <option value="3">⭐⭐⭐ Average</option>
+                    <option value="2">⭐⭐ Poor</option>
+                    <option value="1">⭐ Very Bad</option>
+                </select>
+                <br>
+                <textarea name="comment" placeholder="Share your experience..." required></textarea>
+                <br>
+                <button type="submit">Post Review</button>
+            </form>
+        </div>
+
+        {% for r in reviews %}
+        <div class="review-card">
+            <div class="review-stars">⭐ {{ r.rating }}/5</div>
+            <div class="review-text">{{ r.comment }}</div>
+            <div class="review-date">Posted on {{ r.time }}</div>
+        </div>
+        {% else %}
+        <p style="color: var(--text-gray);">No reviews yet. Be the first to review!</p>
+        {% endfor %}
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast-notification"></div>
+
+    <script>
+        async function addToCartDetail(productId) {
+            try {
+                let res = await fetch(`/add_to_cart/${productId}`);
+                let data = await res.json();
+                if (data.status === 'success') {
+                    showToast('✅ Added to cart!');
+                } else {
+                    showToast('❌ Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showToast('❌ Failed to add item');
+            }
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.innerText = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+    </script>
+
+</body>
+
+</html>

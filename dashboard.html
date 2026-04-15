@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Dashboard | SecurePay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .summary-section {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 16px;
+            padding: 30px;
+            margin-top: 25px;
+        }
+
+        .summary-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #f0f6fc;
+            margin-bottom: 25px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            font-size: 15px;
+            color: #8b949e;
+            border-bottom: 1px solid #21262d;
+        }
+
+        .summary-item:last-of-type {
+            border-bottom: none;
+        }
+
+        .summary-item.total {
+            border-top: 1px solid #30363d;
+            padding: 20px 0 12px 0;
+            margin-top: 15px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #f0f6fc;
+        }
+
+        .summary-item.delivery .amount {
+            color: #3fb950;
+            font-weight: 600;
+        }
+
+        .summary-item.total .amount {
+            color: #00d2ff;
+            font-size: 24px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn-checkout {
+            flex: 1;
+            padding: 14px 20px;
+            background: #00d2ff;
+            color: #05070a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .btn-checkout:hover {
+            background: #00b4db;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 210, 255, 0.3);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 14px 20px;
+            background: #1c2633;
+            color: #8b949e;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .btn-secondary:hover {
+            background: #30363d;
+            color: #f0f6fc;
+            border-color: #484f58;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="logo">🛡️ SecurePay</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/shop">Products</a>
+            <a href="/cart">Cart</a>
+            <a href="/dashboard" class="active">Dashboard</a>
+        </div>
+        <a href="/logout" class="btn-logout">Sign Out</a>
+    </nav>
+
+    <div class="container">
+        <h1>My Dashboard</h1>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-user"></i></div>
+                <div class="stat-info">
+                    <span>Welcome</span>
+                    <div>{{ user.username or session.get('user_email', 'User') }}</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-credit-card"></i></div>
+                <div class="stat-info">
+                    <span>Saved Card</span>
+                    <div>
+                        {% if session.get('card_last4') %}
+                        **** **** **** {{ session.get('card_last4') }}
+                        {% else %}
+                        Not Added
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-box"></i></div>
+                <div class="stat-info">
+                    <span>Total Orders</span>
+                    <div>{{ transactions | length }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-title"><i class="fa-solid fa-circle-info"></i> Profile Information</div>
+            <div class="profile-info">
+                <div class="info-item">
+                    <label>Email Address</label>
+                    <p>{{ user.email or session.get('user_email', 'admin@gmail.com') }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Mobile Number</label>
+                    <p>{{ user.mobile or 'Not set' }}</p>
+                </div>
+            </div>
+        </div>
+
+        {% if cart_items %}
+        <div class="section-card purchase-box">
+            <div class="section-title" style="color: var(--primary);">
+                <i class="fa-solid fa-shopping-bag"></i> Your Items
+            </div>
+            
+            {% for item in cart_items %}
+            <div style="padding: 15px; border: 1px solid #30363d; border-radius: 8px; margin-bottom: 12px; background: #05070a;">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div>
+                        <h4 style="color: #f0f6fc; margin-bottom: 8px;">{{ item.name }}</h4>
+                        <p style="color: #8b949e; font-size: 14px; margin-bottom: 5px;">Price: <strong style="color: #00d2ff; font-size: 16px;">₹{{ item.price }}</strong></p>
+                        <p style="color: #8b949e; font-size: 13px;">Qty: {{ item.qty }} | Total: <strong style="color: #00d2ff;">₹{{ item.total }}</strong></p>
+                        <p style="color: #6e7681; font-size: 12px; margin-top: 5px;">Status: <strong style="color: #ffa657;">Pending Purchase</strong></p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <div class="summary-section">
+                <div class="summary-title">Summary</div>
+                
+                <div class="summary-item">
+                    <span>Subtotal</span>
+                    <span class="amount">₹{{ subtotal }}</span>
+                </div>
+                
+                <div class="summary-item">
+                    <span>Tax (18%)</span>
+                    <span class="amount">₹{{ tax }}</span>
+                </div>
+                
+                <div class="summary-item delivery">
+                    <span>Delivery</span>
+                    <span class="amount">Free</span>
+                </div>
+                
+                <div class="summary-item total">
+                    <span>Total</span>
+                    <span class="amount">₹{{ total }}</span>
+                </div>
+                
+                <div class="button-group">
+                    <a href="/checkout" class="btn-checkout">Proceed to Checkout</a>
+                    <a href="/shop" class="btn-secondary">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="section-card purchase-box">
+            <div class="section-title" style="color: #8b949e;">
+                <i class="fa-solid fa-inbox"></i> No Items Selected
+            </div>
+            <p style="color: #8b949e; margin-bottom: 15px;">You haven't selected any products yet. Start shopping to add items!</p>
+            <a href="/shop" class="btn-proceed">Browse Products</a>
+        </div>
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>

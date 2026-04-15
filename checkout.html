@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Secure Checkout | SecurePay</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link rel="stylesheet" href="/static/style.css">
+
+        <style>
+        body {
+            margin: 0;
+            color: #f0f6fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #05070a;
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(0, 210, 255, 0.1), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 140, 255, 0.1), transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* MAIN LAYOUT */
+        .checkout-container {
+            max-width: 1100px;
+            margin: 50px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1.6fr 1fr;
+            gap: 30px;
+        }
+
+        .checkout-header {
+            grid-column: 1 / -1;
+            margin-bottom: 10px;
+        }
+
+        /* CARD STYLE */
+        .card {
+            background: #0d1117;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #30363d;
+        }
+
+        .section-title {
+            font-size: 18px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f0f6fc;
+        }
+
+        .section-title i {
+            color: #00d2ff;
+        }
+
+        /* FORM STYLES */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: #8b949e;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            background: #05070a;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #00d2ff;
+            outline: none;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* ORDER SUMMARY */
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #8b949e;
+        }
+
+        .summary-item.product {
+            color: #f0f6fc;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 25px;
+        }
+
+        .summary-item.total {
+            border-top: 1px solid #30363d;
+            padding-top: 20px;
+            margin-top: 20px;
+            color: #f0f6fc;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .price {
+            color: #f0f6fc;
+        }
+
+        .total .price {
+            color: #00d2ff;
+        }
+
+        /* BUTTONS */
+        .pay-btn {
+            width: 100%;
+            padding: 15px;
+            background: #00d2ff;
+            color: #05070a;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 25px;
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pay-btn:hover {
+            background: #00b4db;
+            transform: translateY(-2px);
+        }
+
+        .secure-note {
+            text-align: center;
+            font-size: 12px;
+            color: #484f58;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 850px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    </head>
+
+    <body>
+
+        <nav class="navbar">
+            <a href="/" class="logo">🛡️ SecurePay</a>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/shop">Products</a>
+                <a href="/cart">Cart</a>
+                <a href="/dashboard">Dashboard</a>
+            </div>
+            <a href="/logout" class="btn-logout">Sign Out</a>
+        </nav>
+
+        <div class="checkout-container">
+            <div class="checkout-header">
+                <h1>Secure Checkout</h1>
+            </div>
+
+            <form action="/checkout" method="POST" id="checkout-form"
+                class="card">
+                <h2 class="section-title"><i
+                        class="fa-solid fa-credit-card"></i> Payment
+                    Details</h2>
+
+                <div class="form-group">
+                    <label>Cardholder Name</label>
+                    <input type="text" name="cardholder"
+                        placeholder="Cardholder name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" id="card_num" name="card_number"
+                        placeholder="**** **** **** ****" maxlength="19"
+                        required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Month</label>
+                        <input type="text" name="month" placeholder="MM"
+                            maxlength="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Year</label>
+                        <input type="text" name="year" placeholder="YY"
+                            maxlength="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label>CVV</label>
+                        <input type="password" name="cvv" placeholder="•••"
+                            maxlength="3" required>
+                    </div>
+                </div>
+
+                <h2 class="section-title" style="margin-top: 20px;"><i
+                        class="fa-solid fa-location-dot"></i> Billing Address
+                </h2>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text" name="address"
+                        placeholder="123, Street Name" required>
+                </div>
+                <div
+                    style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" name="city" placeholder="Mumbai"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Zip Code</label>
+                        <input type="text" name="zip" placeholder="400001"
+                            required>
+                    </div>
+                </div>
+            </form>
+
+            <div class="card summary-card" style="height: fit-content;">
+                <h2 class="section-title">Order Summary</h2>
+
+                {% if cart_items %}
+                    {% for item in cart_items %}
+                    <div class="summary-item product">
+                        <span>{{ item.name }} × {{ item.qty }}</span>
+                        <span class="price">₹{{ item.total }}</span>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="summary-item product">
+                        <span>{{ session.get('item') }} × 1</span>
+                        <span class="price">₹{{ session.get('amount') }}</span>
+                    </div>
+                {% endif %}
+
+                <div class="summary-item">
+                    <span>Subtotal</span>
+                    <span>₹{{ subtotal if subtotal else session.get('amount', 0) }}</span>
+                </div>
+
+                {% if subtotal %}
+                    {% set amt = subtotal %}
+                {% else %}
+                    {% set amt = session.get('amount', 0) | float %}
+                {% endif %}
+                {% set tax = amt * 0.18 %}
+                <div class="summary-item">
+                    <span>Tax (18%)</span>
+                    <span>₹{{ tax | round(2) }}</span>
+                </div>
+
+                <div class="summary-item">
+                    <span>Delivery</span>
+                    <span style="color: #3fb950;">Free</span>
+                </div>
+
+                <div class="summary-item total">
+                    <span>Total</span>
+                    <span class="price">₹{{ (amt + tax) | round(2) }}</span>
+                </div>
+
+                <button type="submit" form="checkout-form" class="pay-btn">
+                    <i class="fa-solid fa-shield-check"></i> Pay ₹{{ (amt + tax)
+                    | round(2) }}
+                </button>
+
+                <div class="secure-note">
+                    <i class="fa-solid fa-lock"></i> Secured with 256-bit
+                    encryption
+                </div>
+            </div>
+        </div>
+
+        <script>
+        document.getElementById('card_num').addEventListener('input', function (e) {
+            e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+        });
+    </script>
+
+    </body>
+
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | SecurePay</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .cart-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .cart-items {
+            background: #0d1117;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #30363d;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            border: 1px solid #21262d;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .item-image {
+            width: 100px;
+            height: 100px;
+            background: #05070a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #f0f6fc;
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: #00d2ff;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .item-qty {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .qty-btn {
+            background: #1c2633;
+            border: 1px solid #30363d;
+            color: #8b949e;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: #30363d;
+            color: #f0f6fc;
+        }
+
+        .remove-btn {
+            background: #f85149;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: 0.2s;
+        }
+
+        .remove-btn:hover {
+            background: #da3633;
+        }
+
+        .cart-summary {
+            background: #0d1117;
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid #30363d;
+            height: fit-content;
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        .summary-item.total {
+            border-top: 1px solid #30363d;
+            padding-top: 15px;
+            margin-top: 15px;
+            color: #f0f6fc;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 15px;
+            background: #00d2ff;
+            color: #05070a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .checkout-btn:hover {
+            background: #00b4db;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 50px 20px;
+            color: #8b949e;
+        }
+
+        .empty-cart i {
+            font-size: 80px;
+            color: #30363d;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 850px) {
+            .cart-container {
+                grid-template-columns: 1fr;
+            }
+            .cart-summary {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="/" class="logo">🛡️ SecurePay</a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/shop">Products</a>
+            <a href="/cart" class="active">Cart</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+        <a href="/logout" class="btn-logout">Sign Out</a>
+    </nav>
+
+    <div class="cart-container">
+        {% if cart_items %}
+        <div class="cart-items">
+            <h1 style="margin-bottom: 20px;"><i class="fa-solid fa-shopping-cart"></i> Your Cart ({{ cart_items|length }} items)</h1>
+            
+            {% for item in cart_items %}
+            <div class="cart-item">
+                <div class="item-image">📦</div>
+                <div class="item-details">
+                    <div class="item-name">{{ item.name }}</div>
+                    <div class="item-price">₹{{ item.price }}</div>
+                    <div class="item-qty">
+                        <button class="qty-btn" onclick="removeFromCart({{ item.id }})">−</button>
+                        <span>Qty: {{ item.qty }}</span>
+                        <button class="qty-btn" onclick="addToCart({{ item.id }})">+</button>
+                        <button class="remove-btn" onclick="removeFromCart({{ item.id }})"><i class="fa-solid fa-trash"></i> Remove</button>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 14px; color: #8b949e;">Total</div>
+                    <div style="font-size: 18px; color: #00d2ff; font-weight: 600;">₹{{ item.total }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="cart-summary">
+            <h2 style="margin-bottom: 20px; font-size: 18px;">Summary</h2>
+            
+            <div class="summary-item">
+                <span>Subtotal</span>
+                <span>₹{{ subtotal }}</span>
+            </div>
+            
+            <div class="summary-item">
+                <span>Tax (18%)</span>
+                <span>₹{{ tax }}</span>
+            </div>
+            
+            <div class="summary-item">
+                <span>Delivery</span>
+                <span style="color: #3fb950;">Free</span>
+            </div>
+            
+            <div class="summary-item total">
+                <span>Total</span>
+                <span>₹{{ total }}</span>
+            </div>
+            
+            <a href="/checkout" class="checkout-btn">Proceed to Checkout</a>
+            <a href="/shop" class="checkout-btn" style="background: #1c2633; color: #8b949e; text-decoration: none; display: flex; align-items: center; justify-content: center; margin-top: 10px;">Continue Shopping</a>
+        </div>
+        
+        {% else %}
+        <div class="empty-cart">
+            <i class="fa-solid fa-inbox"></i>
+            <h2>Your cart is empty</h2>
+            <p style="margin: 15px 0;">Add some products to get started!</p>
+            <a href="/shop" class="checkout-btn" style="display: inline-block; width: auto; padding: 10px 30px;">Browse Products</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function addToCart(productId) {
+            fetch(`/add_to_cart/${productId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        location.reload();
+                    }
+                });
+        }
+
+        function removeFromCart(productId) {
+            fetch(`/remove_from_cart/${productId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'removed') {
+                        location.reload();
+                    }
+                });
+        }
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ElectroShop | Explore Products</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+
+    <!-- Rezorpay -->
+    <!-- <script>
+        async function payNow(amount) {
+            let response = await fetch("/create-order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    amount: amount
+                })
+            })
+
+            let order = await response.json()
+
+            var options = {
+                key: "rzp_test_SPoIpuOUhqlt8e",
+                amount: order.amount,
+                currency: "INR",
+                name: "SmartPay Store",
+                description: "Product Purchase",
+                order_id: order.id,
+                handler: async function (response) {
+                    await fetch("/verify-payment", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(response)
+                    })
+
+                    alert("✅ Payment Successful")
+                    window.location.href = "/history"
+                }
+            }
+            var rzp = new Razorpay(options)
+            rzp.open()
+        }
+
+    </script> -->
+
+    <script>
+        /* CATEGORY FILTER */
+
+        function filterCategory(category) {
+            const cards = document.querySelectorAll(".card");
+
+            cards.forEach(card => {
+
+                const productCategory = card.dataset.category ? card.dataset.category.toLowerCase().trim() : "";
+                const selectedCategory = category.toLowerCase().trim();
+
+                if (selectedCategory === "all") {
+                    card.style.display = "block";
+                }
+                else if (productCategory.includes(selectedCategory)) {
+                    card.style.display = "block";
+                }
+                else {
+                    card.style.display = "none";
+                }
+            });
+        }
+        /* SORT PRODUCTS */
+        function sortProducts(type) {
+
+            const grid = document.getElementById("imageGrid");
+            const cards = Array.from(grid.querySelectorAll(".card"));
+
+            cards.sort((a, b) => {
+
+                let priceA = parseInt(a.dataset.price);
+                let priceB = parseInt(b.dataset.price);
+
+                let nameA = a.dataset.name.toLowerCase();
+                let nameB = b.dataset.name.toLowerCase();
+
+                if (type === "low") return priceA - priceB;
+
+                if (type === "high") return priceB - priceA;
+
+                if (type === "az") return nameA.localeCompare(nameB);
+
+                if (type === "za") return nameB.localeCompare(nameA);
+
+                return 0;
+
+            });
+
+            grid.innerHTML = "";
+            cards.forEach(card => grid.appendChild(card));
+
+        }
+
+        // Toast
+        function showToast(message) {
+
+            const toast = document.getElementById("toast");
+
+            toast.innerText = "🛒 " + message;
+
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 2500);
+
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="logo" onclick="location.href='/'" style="cursor:pointer;">ElectroShop</div>
+
+        <div class="nav-menu">
+            <button class="nav-btn" onclick="location.href='/'">Home</button>
+            <button class="nav-btn active" onclick="location.href='/shop'">Products</button>
+
+            <!-- CART -->
+            <div class="cart-icon" onclick="openCart()">
+                <i class="fa-solid fa-cart-shopping"></i>
+                <span id="cart-badge">
+                    {{ session['cart']|length if session.get('cart') is iterable else 0 }}
+                </span>
+            </div>
+
+            <!-- Login/Signup Buttons -->
+            {% if session.get('user_email') %}
+                <a href="/dashboard" style="background: #1e293b; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500;">
+                    <i class="fa-solid fa-user"></i> Dashboard
+                </a>
+                <a href="/logout" style="background: #ef4444; color: white; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500;">Logout</a>
+            {% else %}
+                <a href="/login" style="background: transparent; border: 1px solid #00d2ff; color: #00d2ff; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 500;">Login</a>
+                <a href="/signup" style="background: #00d2ff; color: black; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: 600;">Sign Up</a>
+            {% endif %}
+
+        </div>
+    </div>
+
+
+    <div id="cartPanel" class="cart-panel">
+
+        <div class="cart-header">
+            <h3>🛒 Cart (<span id="cart-count">0</span>)</h3>
+            <span onclick="closeCart()" class="close-cart">✕</span>
+        </div>
+
+        <div id="cartItems" style="margin-bottom: 150px;">
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-summary">
+
+                <div class="row">
+                    <span>Subtotal</span>
+                    <span id="subtotal">₹0</span>
+                </div>
+
+                <div class="row">
+                    <span>Tax (18%)</span>
+                    <span id="tax">₹0</span>
+                </div>
+
+                <div class="row">
+                    <span>Delivery</span>
+                    <span>Free</span>
+                </div>
+
+                <hr>
+
+                <div class="row total">
+                    <span>Total</span>
+                    <span id="total">₹0</span>
+                </div>
+
+            </div>
+            <div class="btn-cart">
+                <button onclick="clearCart()" class="clear-btn">Clear Cart</button>
+                <!-- <button onclick="location.href='/login'" class="pay-now">Pay Now</button> -->
+                <button onclick="location.href='/pay/1'" class="pay-now">Pay Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="search-filter-bar">
+            <input id="searchInput" class="search-input" type="text" placeholder="🔍 Search products ..."
+                oninput="searchProduct()">
+
+
+
+            <select class="product-select" onchange="filterCategory(this.value)">
+                <option value="all">All Categories</option>
+                <option value="phone">Smartphones</option>
+                <option value="laptop">Laptops</option>
+                <option value="tv">TV</option>
+                <option value="ac">AC</option>
+                <option value="fridge">Fridges</option>
+            </select>
+
+            <select class="sort-select" onchange="sortProducts(this.value)">
+                <option value="default">Default</option>
+                <option value="low">Price : Low → High</option>
+                <option value="high">Price : High → Low</option>
+                <option value="az">Name : A → Z</option>
+                <option value="za">Name : Z → A</option>
+            </select>
+
+        </div>
+        <div class="grid" id="imageGrid">
+            {% for p in products %}
+
+            <div class="product-card" data-price="{{ p.price }}" data-name="{{ p.name }}" data-category="{{ p.category }}">
+
+                <div class="img-box">
+                    <img src="/static/{{ p.image }}" loading="lazy" alt="{{ p.name }}">
+                </div>
+
+                <div class="details">
+                    <div class="title">{{ p.name }}</div>
+                    <div class="price-box">
+                        <span class="price">₹{{ p.price }}</span>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn-add" onclick="addToCart('{{ p.id }}')">Add to Cart 🛒</button>
+                    <button class="btn-buy" onclick="location.href='/product/{{ p.id }}'">View Details</button>
+                </div>
+
+            </div>
+
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <script>
+
+
+        function openCart() {
+            document.getElementById("cartPanel").classList.add("active");
+            loadCart();
+        }
+
+        function closeCart() {
+            document.getElementById("cartPanel").classList.remove("active");
+        }
+
+        // View Details Function - Navigate to Product Detail Page
+        function viewDetails(productId) {
+            window.location.href = `/product/${productId}`;
+        }
+
+        // Buy Now Function - Redirect to Login
+        function buyNow() {
+            window.location.href = "/login";
+        }
+
+        async function loadCart() {
+
+            let res = await fetch("/cart_data");
+            let data = await res.json();
+
+            document.getElementById("cart-count").innerText = data.items.length;
+
+            document.getElementById("subtotal").innerText = "₹" + data.subtotal;
+            document.getElementById("tax").innerText = "₹" + data.tax;
+            document.getElementById("total").innerText = "₹" + data.total;
+
+            let container = document.getElementById("cartItems");
+
+            container.innerHTML = "";
+
+            if (data.items.length === 0) {
+
+                container.innerHTML = `<p>Your cart is empty</p>`;
+                return;
+
+            }
+
+            data.items.forEach(item => {
+
+                container.innerHTML += `
+
+<div class="cart-card">
+
+<img class="cart-img" src="/static/${item.image}">
+
+<div class="cart-details">
+
+<div class="cart-title">${item.name}</div>
+
+<div class="cart-price">₹${item.price}</div>
+
+<div class="cart-qty">
+
+<button class="qty-btn" onclick="updateQty('${item.id}','minus')">-</button>
+
+<span class="qty-num">${item.qty}</span>
+
+<button class="qty-btn" onclick="updateQty('${item.id}','plus')">+</button>
+
+</div>
+
+</div>
+
+<button class="delete-btn" onclick="removeItem('${item.id}')">
+<i class="fa fa-trash"></i>
+</button>
+
+</div>
+
+`;
+
+            });
+
+        }
+
+        async function updateQty(productId, action) {
+
+            await fetch(`/update_cart/${productId}/${action}`);
+
+            loadCart();
+
+        }
+        async function removeItem(productId) {
+
+            await fetch(`/remove_from_cart/${productId}`);
+
+            loadCart();
+
+        }
+    </script>
+
+    <script>
+        function toggleAdminMenu(event) {
+            event.stopPropagation();
+            let dropdown = document.getElementById("adminDropdown");
+            dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
+        }
+
+        window.onclick = function (event) {
+            let dropdown = document.getElementById("adminDropdown");
+            let adminBtn = document.getElementById("adminBtn");
+
+            if (dropdown && !adminBtn.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.style.display = "none";
+            }
+        }
+
+        async function addToCart(productId) {
+            try {
+
+                const response = await fetch(`/add_to_cart/${productId}`);
+                const data = await response.json();
+
+                if (data.status === "success") {
+
+                    const badge = document.getElementById("cart-badge");
+                    if (badge) {
+                        badge.innerText = data.total_items;
+                    }
+
+                    showToast("Item added to cart");
+
+                    if (document.getElementById("cartPanel").classList.contains("active")) {
+                        loadCart();
+                    }
+
+                } else {
+                    alert("Error: " + data.message);
+                }
+
+            } catch (error) {
+                console.error("Fetch error:", error);
+            }
+        }
+        async function clearCart() {
+            await fetch("/clear_cart");
+            const badge = document.getElementById("cart-badge");
+            if (badge) badge.innerText = "0";
+            loadCart();
+        }
+
+
+        function searchProduct() {
+            let input = document.getElementById('searchInput').value.toLowerCase();
+            let cards = document.querySelectorAll('.card');
+
+            cards.forEach(card => {
+                let name = card.dataset.name.toLowerCase();
+                if (name.includes(input)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
+            });
+        }
+
+        // 1. Show the Pop-up
+        function toggleAdminMenu(event) {
+            event.preventDefault();
+            document.getElementById("adminModal").style.display = "flex";
+        }
+
+        // 2. Close the Pop-up
+        function closeAdminModal() {
+            document.getElementById("adminModal").style.display = "none";
+        }
+
+        // 3. Check Admin Data via Flask
+        async function submitAdminLogin() {
+            const user = document.getElementById("adminUser").value;
+            const pass = document.getElementById("adminPass").value;
+
+            const response = await fetch('/verify_admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, password: pass })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                window.location.href = "/admin"; // Redirect to dashboard
+            } else {
+                document.getElementById("errorMsg").innerText = "❌ invalid data";
+            }
+        }
+    </script>
+
+    <div id="toast" class="toast-notification"></div>
+
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color: #00d2ff;">Admin Authentication</h3>
+            <input type="text" id="adminUser" placeholder="Admin Name">
+            <input type="password" id="adminPass" placeholder="Password">
+            <button onclick="submitAdminLogin()">Access Dashboard</button>
+            <button onclick="closeAdminModal()" style="background: #30363d; margin-top: 5px;">Cancel</button>
+            <p id="admin-error"></p>
+        </div>
+    </div>
+
+</body>
+
+</html>

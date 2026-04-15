@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>SecurePay | Create Account</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body {
+            margin: 0;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+            /* dark base */
+            background-color: #05070a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            /* blue glow layers */
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(0, 210, 255, 0.25), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 140, 255, 0.20), transparent 40%),
+                radial-gradient(circle at 50% 80%, rgba(0, 120, 255, 0.15), transparent 40%);
+
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+
+        }
+
+        /* --- NAVIGATION BAR --- */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: #0b1218;
+            border-bottom: 1px solid #222;
+            width: 100%;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00d2ff;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #999;
+            text-decoration: none;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: white;
+        }
+
+        .nav-links a.active {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .nav-btn {
+            background: #1c2633;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .nav-btn:hover {
+            background: #303d4d;
+            color: #00d2ff;
+            transform: translateY(-2px);
+        }
+
+        /* --- SIGNUP CARD SECTION --- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 80px;
+            /* Space for fixed navbar */
+        }
+
+        .signup-card {
+            background-color: #161b22;
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid #30363d;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #00d2ff, #9d50bb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #0b0f13;
+            color: white;
+            box-sizing: border-box;
+        }
+
+        .reg-btn {
+            width: 100%;
+            padding: 14px;
+            background: #00d2ff;
+            border: none;
+            border-radius: 8px;
+            color: #0b0f13;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: 0.3s;
+        }
+
+        .reg-btn:hover {
+            background: #00b4db;
+            transform: translateY(-2px);
+        }
+
+        /* PASSWORD VALIDATION LIST */
+        .validation-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            font-size: 13px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 15px;
+        }
+
+        .validation-item {
+            position: relative;
+            padding-left: 18px;
+            color: #8b949e;
+        }
+
+        /* ❌ Default invalid icon */
+        .validation-item.invalid::before {
+            content: "✖";
+            position: absolute;
+            left: 0;
+            color: #ff4d4d;
+            font-size: 12px;
+        }
+
+        /* ✅ Valid icon */
+        .validation-item.valid {
+            color: #3fb950;
+        }
+
+        .validation-item.valid::before {
+            content: "✔";
+            position: absolute;
+            left: 0;
+            color: #3fb950;
+            font-size: 12px;
+        }
+
+        .form-group input[type="password"] {
+            letter-spacing: 2px;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper input {
+            padding-right: 40px;
+        }
+
+        .password-wrapper i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #8b949e;
+            font-size: 14px;
+        }
+
+        .password-wrapper i:hover {
+            color: #00d2ff;
+        }
+
+        /* STRENGTH METER STYLES */
+        .strength-meter {
+            height: 4px;
+            width: 100%;
+            background: #30363d;
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .strength-meter-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: right;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div class="navbar">
+        <div class="logo" onclick="location.href='/'" style="cursor:pointer;">🛡️ SecurePay</div>
+
+        <div class="nav-menu">
+            <button class="nav-btn" onclick="location.href='/'">Home</button>
+            <button class="nav-btn" onclick="location.href='/shop'">Products</button>
+        </div>
+    </div>
+
+
+    <div class="main-container">
+        <div class="signup-card">
+            <h2>Create <span class="gradient-text">Account</span></h2>
+            <p style="color: #888;">Join SecurePay for protected shopping</p>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div
+                style="background-color: #ff4d4d; color: white; padding: 10px; border-radius: 5px; margin-bottom: 10px; text-align: center;">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('signup') }}" method="POST">
+
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="username" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="john@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" name="card" placeholder="**** **** **** ****" maxlength="16" minlength="16"
+                        pattern="\d{16}" title="Please enter a 16-digit card number" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="tel" name="mobile" placeholder="+91 9876543210" maxlength="10" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                        <i class="fa-solid fa-eye" id="togglePassword"></i>
+                    </div>
+                    <div class="strength-meter">
+                        <div id="meter-fill" class="strength-meter-fill"></div>
+                    </div>
+                    <div id="strength-label" class="strength-text">Weak</div>
+                    <ul class="validation-list">
+                        <li id="length" class="validation-item invalid">At least 8 characters</li>
+                        <li id="uppercase" class="validation-item invalid">Uppercase letter</li>
+                        <li id="number" class="validation-item invalid">Number</li>
+                        <li id="special" class="validation-item invalid">Special character</li>
+                    </ul>
+                </div>
+
+                <div class="form-group">
+                    <label>Confirm Password</label>
+
+                    <div class="password-wrapper">
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="••••••••"
+                            required>
+                        <i class="fa-solid fa-eye" id="toggleConfirmPassword"></i>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="reg-btn">Sign Up</button>
+
+                <!-- <button type="submit" class="reg-btn">Sign Up</button> -->
+                <p style="text-align: center; margin-top: 15px; color: #8b949e;">
+                    Already have an account?
+                    <a href="{{ url_for('login') }}" style="color: #58a6ff; text-decoration: none;">Login here</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Show / Hide Password  -->
+    <script>
+
+        const togglePassword = document.getElementById("togglePassword");
+        const passwordField = document.getElementById("password");
+
+        togglePassword.addEventListener("click", () => {
+
+            const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+            passwordField.setAttribute("type", type);
+
+            togglePassword.classList.toggle("fa-eye");
+            togglePassword.classList.toggle("fa-eye-slash");
+
+        });
+
+
+        const toggleConfirm = document.getElementById("toggleConfirmPassword");
+        const confirmField = document.getElementById("confirm_password");
+
+        toggleConfirm.addEventListener("click", () => {
+
+            const type = confirmField.getAttribute("type") === "password" ? "text" : "password";
+            confirmField.setAttribute("type", type);
+
+            toggleConfirm.classList.toggle("fa-eye");
+            toggleConfirm.classList.toggle("fa-eye-slash");
+
+        });
+
+    </script>
+
+    <!-- Confirm password validation -->
+    <script>
+        const form = document.querySelector("form");
+        const password = document.getElementById("password");
+        const confirmPassword = document.getElementById("confirm_password");
+
+        form.addEventListener("submit", function (e) {
+
+            if (password.value !== confirmPassword.value) {
+
+                e.preventDefault();
+                alert("Passwords do not match!");
+                confirmPassword.focus();
+            }
+
+        });
+    </script>
+
+    <script>
+
+        setTimeout(function () {
+            let flashMessage = document.querySelector('[style*="background-color: #ff4d4d"]');
+            if (flashMessage) {
+                flashMessage.style.transition = "opacity 0.5s ease";
+                flashMessage.style.opacity = "0";
+                setTimeout(() => flashMessage.remove(), 500);
+            }
+        }, 4000);
+    </script>
+
+    <script>
+        const passwordInput = document.getElementById('password');
+        const meterFill = document.getElementById('meter-fill');
+        const strengthLabel = document.getElementById('strength-label');
+
+        const requirements = {
+            length: document.getElementById('length'),
+            uppercase: document.getElementById('uppercase'),
+            number: document.getElementById('number'),
+            special: document.getElementById('special')
+        };
+
+        passwordInput.addEventListener('input', () => {
+            const val = passwordInput.value;
+
+            // Validation Logic
+            const tests = {
+                length: val.length >= 8,
+                uppercase: /[A-Z]/.test(val),
+                number: /[0-9]/.test(val),
+                special: /[^A-Za-z0-9]/.test(val)
+            };
+
+            // Update Checklist UI
+            let score = 0;
+            for (const key in tests) {
+                if (tests[key]) {
+                    requirements[key].classList.remove('invalid');
+                    requirements[key].classList.add('valid');
+                    score++;
+                } else {
+                    requirements[key].classList.remove('valid');
+                    requirements[key].classList.add('invalid');
+                }
+            }
+
+            // Update Strength Meter
+            const colors = ['#ff4d4d', '#ff4d4d', '#ffa333', '#f7e025', '#3fb950'];
+            const labels = ['Too Short', 'Weak', 'Fair', 'Good', 'Strong'];
+
+            let strengthIndex = val.length === 0 ? 0 : score;
+            if (val.length > 0 && val.length < 8) strengthIndex = 1;
+
+            meterFill.style.width = (strengthIndex / 4) * 100 + '%';
+            meterFill.style.backgroundColor = colors[strengthIndex];
+            strengthLabel.innerText = labels[strengthIndex];
+            strengthLabel.style.color = colors[strengthIndex];
+        });
+    </script>
+
+</body>
+
+</html>

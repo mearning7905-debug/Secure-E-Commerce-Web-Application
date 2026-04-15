@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification | SecurePay</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            color: #f0f6fc;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #05070a;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(0, 210, 255, 0.1), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(0, 140, 255, 0.1), transparent 40%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .card-box {
+            background: rgba(13, 17, 23, 0.7);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo-box { color: #00d2ff; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
+        h2 { font-size: 22px; margin-bottom: 10px; }
+        p.desc { color: #8b949e; font-size: 14px; margin-bottom: 30px; }
+
+        .otp-input-container { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 25px; }
+        .otp-digit {
+            width: 55px; height: 65px; background: #05070a; border: 1px solid #30363d;
+            border-radius: 12px; color: #00d2ff; font-size: 24px; font-weight: bold; text-align: center;
+        }
+        .otp-digit:focus { border-color: #00d2ff; box-shadow: 0 0 10px rgba(0, 210, 255, 0.3); outline: none; }
+
+        button { width: 100%; padding: 12px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-verify { background: #00d2ff; color: #05070a; margin-bottom: 10px; }
+        .btn-show-otp { background: rgba(0, 210, 255, 0.1); color: #00d2ff; border: 1px solid #00d2ff; margin-bottom: 15px; }
+        .btn-resend { background: transparent; color: #8b949e; font-size: 13px; }
+
+        /* Modal Styles */
+        .otp-modal { display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); justify-content: center; align-items: center; z-index: 9999; }
+        .otp-modal-content { background: #0d1117; padding: 30px; border-radius: 15px; border: 1px solid #00d2ff; width: 280px; text-align: center; }
+        .blur-bg { filter: blur(8px); pointer-events: none; }
+    </style>
+</head>
+<body>
+
+    <div id="mainContent">
+        <div class="card-box">
+            <div class="logo-box">🛡️ SecurePay</div>
+            <h2>OTP Verification</h2>
+            <p class="desc">Enter code to authorize transaction of <b>₹{{ session.get('amount') }}</b></p>
+
+            <!-- Email Notification -->
+            {% if email_sent %}
+            <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid #22c55e; color: #86efac; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 20px;">
+                <i class="fa-solid fa-check-circle"></i> OTP sent to your registered email<br>
+                <small>Check your email for the verification code</small>
+            </div>
+            {% else %}
+            <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; color: #fca5a5; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 20px;">
+                <i class="fa-solid fa-warning"></i> Failed to send OTP email<br>
+                <small>Click "Show OTP" below to view your code</small>
+            </div>
+            {% endif %}
+
+            <button class="btn-show-otp" onclick="showOTP()"><i class="fa-solid fa-eye"></i> Show OTP</button>
+
+            <form method="post" action="/verify">
+                <div class="otp-input-container">
+                    <input type="text" class="otp-digit" maxlength="1" onkeyup="moveFocus(this, 'd2')" id="d1" required>
+                    <input type="text" class="otp-digit" maxlength="1" onkeyup="moveFocus(this, 'd3')" id="d2" required>
+                    <input type="text" class="otp-digit" maxlength="1" onkeyup="moveFocus(this, 'd4')" id="d3" required>
+                    <input type="text" class="otp-digit" maxlength="1" onkeyup="moveFocus(this, 'submit_btn')" id="d4" required>
+                </div>
+                <input type="hidden" name="otp" id="final_otp">
+                <button type="submit" id="submit_btn" class="btn-verify" onclick="combineOTP()">Verify & Pay</button>
+            </form>
+
+            <form action="/resend_otp" method="get">
+                <button type="submit" class="btn-resend">Didn't receive code? Resend OTP</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="otpModal" class="otp-modal">
+        <div class="otp-modal-content">
+            <h3 style="margin-top: 0;">🔐 Your OTP</h3>
+            <div style="font-size: 32px; color: #00d2ff; font-weight: bold; letter-spacing: 5px; margin: 20px 0;">{{ otp }}</div>
+            <p id="popupTimer" style="color:#facc15; font-size: 13px;">Expires in <span id="popupTime">30</span>s</p>
+            <button onclick="closePopup()" style="background: #30363d; color: white; margin-top: 10px;">Close</button>
+        </div>
+    </div>
+
+    <input type="hidden" id="resentFlag" value="{{ 'true' if resent else 'false' }}">
+
+    <script>
+        let popupTime = 30;
+        let popupTimer;
+
+        function moveFocus(current, nextId) {
+            if (current.value.length >= 1) {
+                document.getElementById(nextId)?.focus();
+            }
+        }
+
+        function combineOTP() {
+            document.getElementById('final_otp').value = 
+                document.getElementById('d1').value + document.getElementById('d2').value + 
+                document.getElementById('d3').value + document.getElementById('d4').value;
+        }
+
+        function showOTP() {
+            document.getElementById("otpModal").style.display = "flex";
+            document.getElementById("mainContent").classList.add("blur-bg");
+            popupTime = 30;
+            clearInterval(popupTimer);
+            popupTimer = setInterval(() => {
+                popupTime--;
+                if(document.getElementById("popupTime")) document.getElementById("popupTime").innerText = popupTime;
+                if (popupTime <= 0) {
+                    clearInterval(popupTimer);
+                    document.getElementById("popupTimer").innerHTML = "❌ OTP Expired";
+                }
+            }, 1000);
+        }
+
+        function closePopup() {
+            document.getElementById("otpModal").style.display = "none";
+            document.getElementById("mainContent").classList.remove("blur-bg");
+            clearInterval(popupTimer);
+        }
+
+        window.onload = function() {
+            if (document.getElementById("resentFlag").value === "true") showOTP();
+        };
+    </script>
+</body>
+</html>
