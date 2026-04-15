@@ -9,23 +9,29 @@ Developed a full-stack e-commerce web application enabling secure online transac
 * **📊 Structured data handling with SQLite**
 * **🖥️ Clean and simple user interface**
 * **⚡ Lightweight and fast execution**
-* **🛠️ Tech Stack**
-# Category	Technology Used
-Backend	Python (Flask)
-Frontend	HTML, CSS, JavaScript
-Database	SQLite
-Architecture	MVC (Flask-based)
+
+# 🛠️ Tech Stack
+
+| Category      | Technology Used              |
+|--------------|-----------------------------|
+| Backend       | Python (Flask)              |
+| Frontend      | HTML, CSS, JavaScript       |
+| Database      | SQLite                      |
+| Architecture  | MVC (Flask-based structure) |
+
 
 # 📂 Project Structure
-Credit_Card_Fraud_Detection/
+```text
+Secure-E-Commerce-Web-Application/
 │
-├── static/              # CSS, JavaScript, Images
-├── templates/           # HTML Templates
+├── static/ # CSS, JavaScript, Images
+├── templates/ # HTML Templates
 │
-├── app.py               # Main Flask Application
-├── smartpay.db          # SQLite Database
+├── app.py # Main Flask Application
+├── smartpay.db # SQLite Database
 ├── .gitignore
-└── README.md            # Project Documentation
+└── README.md # Project Documentation
+```
 
 # ⚙️ How to Run the Project
 * **1️⃣ Clone the Repository**
@@ -53,19 +59,25 @@ It helps in understanding:
 
 Web application development using Flask Database integration with SQLite Handling transaction-based data Applying basic fraud detection techniques
 
-#🎓 Academic Context
+# 🎓 Academic Context
 This project was developed as part of the Bachelor of Science in Computer Science (B.Sc CS) curriculum.
 
-* **👨‍💻 Authors**
-👤 Charmy Basopiya
+# 👨‍💻 Authors 
 
-**🎓 B.Sc Computer Science Student**
+**👤 Charmy Basopiya**
+
+🎓 B.Sc Computer Science Student
+
 🔐 Interested in Cybersecurity & Software Development
+
 🔗 GitHub: https://github.com/mearning7905-debug
-👤 Modi Zalak
+
+**👤 Modi Zalak**
 
 * **🤝 Project Collaborator**
+
 🔗 GitHub: https://github.com/modizalak46-sketch
+
 # ⭐ Support
 If you found this project helpful, consider giving it a ⭐ on GitHub — it really helps!
 
