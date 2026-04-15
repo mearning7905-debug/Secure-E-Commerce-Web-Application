@@ -1,0 +1,43 @@
+body {
+    margin: 0;
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+    /* dark base */
+    background-color: #05070a;
+
+    /* blue glow layers */
+    background-image:
+        radial-gradient(circle at 20% 50%, rgba(0, 210, 255, 0.25), transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(0, 140, 255, 0.20), transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(0, 120, 255, 0.15), transparent 40%);
+
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 100vh;
+}
+
+.dashboard {
+    max-width: 1000px;
+    margin: auto;
+    background: #1e293b;
+    padding: 30px;
+    border-radius: 12px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.chart-box {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    height: 350px;
+}
+
+#txChart {
+    width: 100% !important;
+    height: 300px !important;
+}
